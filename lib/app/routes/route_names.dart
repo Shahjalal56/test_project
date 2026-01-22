@@ -1,5 +1,6 @@
 class RouteNames {
-  static const String home = '/';
-  static const String parentScreen = '/parentScreen';
+
+  static const String parentScreen = '/';
+  static const String home = '/home';
 
 }
