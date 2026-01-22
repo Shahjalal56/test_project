@@ -1,22 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-import '../../../../../app/routes/route_names.dart';
-
-class HomeScreen extends StatefulWidget {
-  const HomeScreen({super.key});
-
-  @override
-  State<HomeScreen> createState() => _HomeScreenState();
-}
-
-class _HomeScreenState extends State<HomeScreen> {
-  final List<Map<String, dynamic>> categories = [
-    {'name': 'Mobile', 'icon': 'assets/icons/jt4.png'},
-    {'name': 'Gaming', 'icon': 'assets/icons/jt2.png'},
-    {'name': 'Images', 'icon': 'assets/icons/jt3.png'},
-    {'name': 'Vehicles', 'icon': 'assets/icons/jt4.png'},
-  ];
+class SeeAllScreen extends StatelessWidget {
+  SeeAllScreen({super.key});
 
   final List<Map<String, dynamic>> products = [
     {'name': 'Samsung Galaxy 3 in 512GB', 'price': 69, 'oldPrice': 87, 'image': 'assets/images/im1.png', 'rating': 5.0},
@@ -25,6 +11,8 @@ class _HomeScreenState extends State<HomeScreen> {
     {'name': 'Samsung Galaxy 3 in 512GB', 'price': 69, 'oldPrice': null, 'image': 'assets/images/image4.png', 'rating': 5.0},
     {'name': 'Samsung Galaxy 3 in 512GB', 'price': 69, 'oldPrice': 87, 'image': 'assets/images/image5.png', 'rating': 5.0},
     {'name': 'Samsung Galaxy 3 in 512GB', 'price': 69, 'oldPrice': null, 'image': 'assets/images/image6.png', 'rating': 5.0},
+    {'name': 'Samsung Galaxy 3 in 512GB', 'price': 69, 'oldPrice': 87, 'image': 'assets/images/im1.png', 'rating': 5.0},
+    {'name': 'Samsung Galaxy 3 in 512GB', 'price': 69, 'oldPrice': null, 'image': 'assets/images/image2.png', 'rating': 5.0},
   ];
 
   @override
@@ -32,25 +20,60 @@ class _HomeScreenState extends State<HomeScreen> {
     return Scaffold(
       backgroundColor: const Color(0xFFF8F9FA),
       body: SafeArea(
-        child: SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              SizedBox(height: 16.h),
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: 16.w),
-                child: _buildSearchBar(),
+        child: Column(
+          children: [
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
+              child: Row(
+                children: [
+                  GestureDetector(
+                    onTap: () {
+                      Navigator.pop(context);
+                    },
+                    child: Container(
+                      height: 40.w,
+                      width: 40.w,
+                      decoration: const BoxDecoration(
+                        color: Color(0xFFfebb38),
+                        shape: BoxShape.circle,
+                      ),
+                      child: const Icon(
+                        Icons.arrow_back_ios_new,
+                        color: Colors.black,
+                        size: 18,
+                      ),
+                    ),
+                  ),
+                  SizedBox(width: 16.w),
+                  Text(
+                    'All Products',
+                    style: TextStyle(
+                      fontSize: 20.sp,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black,
+                    ),
+                  ),
+                ],
               ),
-              SizedBox(height: 24.h),
-              _buildCategoriesSection(),
-              SizedBox(height: 20.h),
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: 16.w),
-                child: _buildNewArrivalsSection(),
+            ),
+
+            Expanded(
+              child: SingleChildScrollView(
+                physics: const BouncingScrollPhysics(),
+                child: Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 16.w),
+                  child: Column(
+                    children: [
+                      _buildSearchBar(),
+                      SizedBox(height: 20.h),
+                      _buildNewArrivalsSection(),
+                      SizedBox(height: 20.h),
+                    ],
+                  ),
+                ),
               ),
-              SizedBox(height: 16.h),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );
@@ -80,96 +103,20 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Widget _buildCategoriesSection() {
-    return Container(
-      width: double.infinity,
-      padding: EdgeInsets.symmetric(vertical: 18.h, horizontal: 16.w),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.02),
-            blurRadius: 5,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
-      child: Column(
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                'Categories',
-                style: TextStyle(fontSize: 18.sp, fontWeight: FontWeight.bold, color: Colors.black),
-              ),
-              InkWell(
-                onTap: ()=> Navigator.pushNamed(context, RouteNames.seeAllScreen),
-                child: Text(
-                  'See all',
-                  style: TextStyle(fontSize: 14.sp, color: Colors.grey, fontWeight: FontWeight.w500),
-                ),
-              ),
-            ],
-          ),
-          SizedBox(height: 16.h),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: categories.map((category) {
-              return _buildCategoryItem(category['name'], category['icon']);
-            }).toList(),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildCategoryItem(String name, String iconPath) {
-    return Column(
-      children: [
-        Container(
-          width: 65.w,
-          height: 65.w,
-          padding: EdgeInsets.all(18.w),
-          decoration: const BoxDecoration(color: Color(0xFFFFF5EB), shape: BoxShape.circle),
-          child: Image.asset(
-            iconPath,
-            fit: BoxFit.contain,
-            cacheWidth: 100,
-          ),
-        ),
-        SizedBox(height: 8.h),
-        Text(name, style: TextStyle(fontSize: 12.sp, color: Colors.grey.shade800, fontWeight: FontWeight.w500)),
-      ],
-    );
-  }
-
   Widget _buildNewArrivalsSection() {
-    return Column(
-      children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text('New Arrivals', style: TextStyle(fontSize: 18.sp, fontWeight: FontWeight.bold, color: Colors.black)),
-            Icon(Icons.tune, color: Colors.grey.shade600, size: 22.sp),
-          ],
-        ),
-        SizedBox(height: 16.h),
-        GridView.builder(
-          shrinkWrap: true,
-          physics: const NeverScrollableScrollPhysics(),
-          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 2,
-            crossAxisSpacing: 14.w,
-            mainAxisSpacing: 14.h,
-            childAspectRatio: 0.68,
-          ),
-          itemCount: products.length,
-          itemBuilder: (context, index) {
-            return _buildProductCard(products[index]);
-          },
-        ),
-      ],
+    return GridView.builder(
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 2,
+        crossAxisSpacing: 14.w,
+        mainAxisSpacing: 14.h,
+        childAspectRatio: 0.68,
+      ),
+      itemCount: products.length,
+      itemBuilder: (context, index) {
+        return _buildProductCard(products[index]);
+      },
     );
   }
 
