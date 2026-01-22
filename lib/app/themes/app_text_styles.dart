@@ -1,23 +1,23 @@
 import 'package:flutter/material.dart';
-
-
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import '../../core/constants/app_colors.dart';
 
 class AppTextStyles {
-  static const TextStyle headlineLarge = TextStyle(
+  static  TextStyle headlineLarge = TextStyle(
     fontSize: 32,
     fontWeight: FontWeight.bold,
     color: AppColors.textPrimary,
   );
 
-  static const TextStyle headlineMedium = TextStyle(
-    fontSize: 24,
+  static TextStyle headlineMedium = TextStyle(
+    fontSize: 18.sp,
     fontWeight: FontWeight.w600,
     color: AppColors.textPrimary,
   );
 
-  static const TextStyle headlineSmall = TextStyle(
-    fontSize: 20,
-    fontWeight: FontWeight.w600,
+  static  TextStyle headlineSmall = TextStyle(
+    fontSize: 14.sp,
+    fontWeight: FontWeight.w400,
     color: AppColors.textPrimary,
   );
 
