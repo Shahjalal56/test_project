@@ -82,9 +82,9 @@ class _SeeAllScreenState extends State<SeeAllScreen> {
             child: Container(
               height: 40.w,
               width: 40.w,
-              decoration: const BoxDecoration(
+              decoration: BoxDecoration(
                 color: Color(0xFFfebb38),
-                borderRadius: BorderRadius.zero,
+                borderRadius: BorderRadius.circular(30.r),
               ),
               child: const Icon(
                 Icons.arrow_back_ios_new,
