@@ -49,12 +49,14 @@ class HomepageCategories {
     name = json['name'];
     slug = json['slug'];
 
-    String rawIcon = json['icon'] ?? '';
+
+    icon = json['icon'];
+    // String rawIcon = json['icon'] ?? '';
     String rawImage = json['image'] ?? '';
 
-    icon = (rawIcon.isNotEmpty && !rawIcon.startsWith('http'))
-        ? "${ApiEndPoints.imageBaseUrl}$rawIcon"
-        : rawIcon;
+    // icon = (rawIcon.isNotEmpty && !rawIcon.startsWith('http'))
+    //     ? "${ApiEndPoints.imageBaseUrl}$rawIcon"
+    //     : rawIcon;
 
     image = (rawImage.isNotEmpty && !rawImage.startsWith('http'))
         ? "${ApiEndPoints.imageBaseUrl}$rawImage"

@@ -163,7 +163,7 @@ class _HomeScreenState extends State<HomeScreen> {
           Container(
             width: 65.w,
             height: 65.w,
-            padding: EdgeInsets.all(12.w),
+            padding: EdgeInsets.all(16.w),
             decoration: const BoxDecoration(
               color: Color(0xFFFFF5EB),
               shape: BoxShape.circle,
@@ -172,7 +172,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 ? ClipOval(
               child: Image.network(
                 iconUrl,
-                fit: BoxFit.cover,
+                fit: BoxFit.contain,
                 errorBuilder: (context, error, stackTrace) {
                   return Icon(
                     Icons.category,
@@ -268,7 +268,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   padding: EdgeInsets.only(right: 16.w),
                   child: _buildCategoryItem(
                     category.name ?? 'Unknown',
-                    category.icon ?? category.image ?? '',
+                    category.image ?? '',
                     category.id ?? 0,
                   ),
                 );
