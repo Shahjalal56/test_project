@@ -1,82 +1,108 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:provider/provider.dart';
 
 import '../../../../../app/routes/route_names.dart';
+import '../../view_model/see_all_product_provider.dart';
 
-class SeeAllScreen extends StatelessWidget {
-  SeeAllScreen({super.key});
+class SeeAllScreen extends StatefulWidget {
+  const SeeAllScreen({super.key});
 
-  final List<Map<String, dynamic>> products = [
-    {'name': 'Samsung Galaxy 3 in 512GB', 'price': 69, 'oldPrice': 87, 'image': 'assets/images/im1.png', 'rating': 5.0},
-    {'name': 'Samsung Galaxy 3 in 512GB', 'price': 69, 'oldPrice': null, 'image': 'assets/images/image2.png', 'rating': 5.0},
-    {'name': 'Samsung Galaxy 3 in 512GB', 'price': 69, 'oldPrice': 87, 'image': 'assets/images/image3.png', 'rating': 5.0},
-    {'name': 'Samsung Galaxy 3 in 512GB', 'price': 69, 'oldPrice': null, 'image': 'assets/images/image4.png', 'rating': 5.0},
-    {'name': 'Samsung Galaxy 3 in 512GB', 'price': 69, 'oldPrice': 87, 'image': 'assets/images/image5.png', 'rating': 5.0},
-    {'name': 'Samsung Galaxy 3 in 512GB', 'price': 69, 'oldPrice': null, 'image': 'assets/images/image6.png', 'rating': 5.0},
-    {'name': 'Samsung Galaxy 3 in 512GB', 'price': 69, 'oldPrice': 87, 'image': 'assets/images/im1.png', 'rating': 5.0},
-    {'name': 'Samsung Galaxy 3 in 512GB', 'price': 69, 'oldPrice': null, 'image': 'assets/images/image2.png', 'rating': 5.0},
-  ];
+  @override
+  State<SeeAllScreen> createState() => _SeeAllScreenState();
+}
+
+class _SeeAllScreenState extends State<SeeAllScreen> {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<SeeAllProvider>().getSeeAllProducts();
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFFF8F9FA),
       body: SafeArea(
-        child: Column(
-          children: [
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
-              child: Row(
-                children: [
-                  GestureDetector(
-                    onTap: () {
-                      Navigator.pop(context);
-                    },
-                    child: Container(
-                      height: 40.w,
-                      width: 40.w,
-                      decoration: const BoxDecoration(
-                        color: Color(0xFFfebb38),
-                        shape: BoxShape.circle,
-                      ),
-                      child: const Icon(
-                        Icons.arrow_back_ios_new,
-                        color: Colors.black,
-                        size: 18,
-                      ),
-                    ),
-                  ),
-                  SizedBox(width: 16.w),
-                  Text(
-                    'All Products',
-                    style: TextStyle(
-                      fontSize: 20.sp,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.black,
-                    ),
-                  ),
-                ],
-              ),
-            ),
+        child: Consumer<SeeAllProvider>(
+          builder: (context, viewModel, child) {
+            if (viewModel.isLoading &&
+                viewModel.seeAllProductResponseModel == null) {
+              return const Center(
+                child: CircularProgressIndicator(color: Color(0xFFfebb38)),
+              );
+            }
 
-            Expanded(
-              child: SingleChildScrollView(
-                physics: const BouncingScrollPhysics(),
-                child: Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 16.w),
-                  child: Column(
-                    children: [
-                      _buildSearchBar(),
-                      SizedBox(height: 20.h),
-                      _buildNewArrivalsSection(),
-                      SizedBox(height: 20.h),
-                    ],
+            if (viewModel.errorMessage != null &&
+                viewModel.seeAllProductResponseModel == null) {
+              return _buildErrorWidget(viewModel);
+            }
+
+            return Column(
+              children: [
+                _buildHeader(context),
+                Expanded(
+                  child: RefreshIndicator(
+                    onRefresh: () => viewModel.getSeeAllProducts(),
+                    color: const Color(0xFFfebb38),
+                    child: SingleChildScrollView(
+                      physics: const AlwaysScrollableScrollPhysics(),
+                      child: Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 16.w),
+                        child: Column(
+                          children: [
+                            SizedBox(height: 16.h),
+                            _buildSearchBar(),
+                            SizedBox(height: 20.h),
+                            _buildProductGrid(viewModel),
+                            SizedBox(height: 20.h),
+                          ],
+                        ),
+                      ),
+                    ),
                   ),
                 ),
+              ],
+            );
+          },
+        ),
+      ),
+    );
+  }
+
+  Widget _buildHeader(BuildContext context) {
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
+      child: Row(
+        children: [
+          GestureDetector(
+            onTap: () => Navigator.pop(context),
+            child: Container(
+              height: 40.w,
+              width: 40.w,
+              decoration: const BoxDecoration(
+                color: Color(0xFFfebb38),
+                borderRadius: BorderRadius.zero,
+              ),
+              child: const Icon(
+                Icons.arrow_back_ios_new,
+                color: Colors.black,
+                size: 18,
               ),
             ),
-          ],
-        ),
+          ),
+          SizedBox(width: 16.w),
+          Text(
+            'All Products',
+            style: TextStyle(
+              fontSize: 20.sp,
+              fontWeight: FontWeight.bold,
+              color: Colors.black,
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -85,6 +111,7 @@ class SeeAllScreen extends StatelessWidget {
     return Container(
       decoration: BoxDecoration(
         color: Colors.white,
+        borderRadius: BorderRadius.zero,
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.04),
@@ -97,7 +124,11 @@ class SeeAllScreen extends StatelessWidget {
         decoration: InputDecoration(
           hintText: 'Search products',
           hintStyle: TextStyle(color: Colors.grey.shade400, fontSize: 15.sp),
-          prefixIcon: Icon(Icons.search, color: Colors.grey.shade400, size: 22.sp),
+          prefixIcon: Icon(
+            Icons.search,
+            color: Colors.grey.shade400,
+            size: 22.sp,
+          ),
           border: InputBorder.none,
           contentPadding: EdgeInsets.symmetric(vertical: 12.h),
         ),
@@ -105,7 +136,21 @@ class SeeAllScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildNewArrivalsSection() {
+  Widget _buildProductGrid(SeeAllProvider viewModel) {
+    final products = viewModel.allProducts ?? [];
+
+    if (products.isEmpty) {
+      return Center(
+        child: Padding(
+          padding: EdgeInsets.only(top: 100.h),
+          child: Text(
+            'No products found',
+            style: TextStyle(fontSize: 16.sp, color: Colors.grey),
+          ),
+        ),
+      );
+    }
+
     return GridView.builder(
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
@@ -113,19 +158,27 @@ class SeeAllScreen extends StatelessWidget {
         crossAxisCount: 2,
         crossAxisSpacing: 14.w,
         mainAxisSpacing: 14.h,
-        childAspectRatio: 0.68,
+        childAspectRatio: 0.65,
       ),
       itemCount: products.length,
       itemBuilder: (context, index) {
-        return _buildProductCard(context,products[index]);
+        return _buildProductCard(products[index]);
       },
     );
   }
 
-  Widget _buildProductCard(BuildContext context,Map<String, dynamic> product) {
+  Widget _buildProductCard(product) {
+    final hasDiscount =
+        product.offerPrice != null &&
+        product.offerPrice! > 0 &&
+        product.offerPrice! < (product.price ?? 0);
+    final displayPrice = hasDiscount ? product.offerPrice! : product.price ?? 0;
+    final rating = double.tryParse(product.averageRating ?? '0') ?? 0.0;
+
     return Container(
       decoration: BoxDecoration(
         color: Colors.white,
+        borderRadius: BorderRadius.zero,
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.04),
@@ -135,7 +188,8 @@ class SeeAllScreen extends StatelessWidget {
         ],
       ),
       child: InkWell(
-        onTap: ()=>Navigator.pushNamed(context, RouteNames.popularSellsScreen),
+        onTap: () =>
+            Navigator.pushNamed(context, RouteNames.popularSellsScreen),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -145,16 +199,13 @@ class SeeAllScreen extends StatelessWidget {
                   Container(
                     width: double.infinity,
                     padding: EdgeInsets.all(10.w),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.vertical(top: Radius.circular(12.r)),
-                    ),
-                    child: ClipRRect(
-                      child: Image.asset(
-                        product['image'],
-                        fit: BoxFit.contain,
-                        cacheHeight: 250,
-                        errorBuilder: (context, error, stackTrace) => const Icon(Icons.image_not_supported),
+                    decoration: const BoxDecoration(color: Colors.white),
+                    child: Image.network(
+                      product.thumbImage ?? '',
+                      fit: BoxFit.contain,
+                      errorBuilder: (context, error, stackTrace) => const Icon(
+                        Icons.image_not_supported,
+                        color: Colors.grey,
                       ),
                     ),
                   ),
@@ -163,8 +214,15 @@ class SeeAllScreen extends StatelessWidget {
                     right: 8,
                     child: Container(
                       padding: const EdgeInsets.all(5),
-                      decoration: const BoxDecoration(color: Color(0xFFF8F9FA), shape: BoxShape.circle),
-                      child: Icon(Icons.favorite_border, size: 16.sp, color: Colors.grey.shade400),
+                      decoration: const BoxDecoration(
+                        color: Color(0xFFF8F9FA),
+                        borderRadius: BorderRadius.zero,
+                      ),
+                      child: Icon(
+                        Icons.favorite_border,
+                        size: 16.sp,
+                        color: Colors.grey.shade400,
+                      ),
                     ),
                   ),
                 ],
@@ -175,37 +233,90 @@ class SeeAllScreen extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Row(
-                    children: List.generate(5, (index) => Icon(Icons.star, size: 12.sp, color: Colors.amber.shade600)),
+                  FittedBox(
+                    child: Row(
+                      children: List.generate(
+                        5,
+                        (index) => Icon(
+                          index < rating.floor()
+                              ? Icons.star
+                              : Icons.star_border,
+                          size: 12.sp,
+                          color: Colors.amber.shade600,
+                        ),
+                      ),
+                    ),
                   ),
                   SizedBox(height: 5.h),
                   Text(
-                    product['name'],
-                    style: TextStyle(fontSize: 13.sp, fontWeight: FontWeight.w600, color: Colors.black87),
+                    product.name ?? '',
+                    style: TextStyle(
+                      fontSize: 13.sp,
+                      fontWeight: FontWeight.w600,
+                      color: Colors.black87,
+                    ),
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
                   ),
                   SizedBox(height: 6.h),
-                  Row(
-                    children: [
-                      Text(
-                        '\$${product['price']}',
-                        style: TextStyle(fontSize: 16.sp, fontWeight: FontWeight.bold, color: Colors.redAccent),
-                      ),
-                      if (product['oldPrice'] != null) ...[
-                        SizedBox(width: 5.w),
+                  FittedBox(
+                    fit: BoxFit.scaleDown,
+                    child: Row(
+                      children: [
                         Text(
-                          '\$${product['oldPrice']}',
-                          style: TextStyle(fontSize: 11.sp, color: Colors.grey.shade400, decoration: TextDecoration.lineThrough),
+                          '\$${displayPrice.toStringAsFixed(2)}',
+                          style: TextStyle(
+                            fontSize: 16.sp,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.redAccent,
+                          ),
                         ),
+                        if (hasDiscount) ...[
+                          SizedBox(width: 5.w),
+                          Text(
+                            '\$${product.price!.toStringAsFixed(2)}',
+                            style: TextStyle(
+                              fontSize: 11.sp,
+                              color: Colors.grey.shade400,
+                              decoration: TextDecoration.lineThrough,
+                            ),
+                          ),
+                        ],
                       ],
-                    ],
+                    ),
                   ),
                 ],
               ),
             ),
           ],
         ),
+      ),
+    );
+  }
+
+  Widget _buildErrorWidget(SeeAllProvider viewModel) {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(Icons.error_outline, size: 60.sp, color: Colors.red),
+          SizedBox(height: 16.h),
+          Text(
+            viewModel.errorMessage!,
+            style: TextStyle(fontSize: 16.sp, color: Colors.grey.shade600),
+          ),
+          SizedBox(height: 20.h),
+          ElevatedButton(
+            onPressed: () => viewModel.getSeeAllProducts(),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: const Color(0xFFfebb38),
+              shape: const RoundedRectangleBorder(
+                borderRadius: BorderRadius.zero,
+              ),
+            ),
+            child: const Text('Retry', style: TextStyle(color: Colors.black)),
+          ),
+        ],
       ),
     );
   }
