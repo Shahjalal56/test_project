@@ -1,8 +1,11 @@
 class ApiEndPoints {
   ApiEndPoints._();
 
-  static const String baseUrl = 'http://156.67.221.155:4008';
+  static const String baseUrl = 'https://mamunuiux.com';
 
-  // Home
-  static const homeArt = '$baseUrl/api/ai/generate-image';
+  static const String imageBaseUrl = 'https://mamunuiux.com/flutter_task/';
+  static const getHomeScreen = '$baseUrl/flutter_task/api';
+  static const getSeeAllProduct = '$baseUrl/flutter_task/api/product';
+  static productDetails(String productId) => '$baseUrl/flutter_task/api/product/$productId';
+  static String productsByCategory(int categoryId) => '$baseUrl/flutter_task/api/product-by-category/$categoryId';
 }
