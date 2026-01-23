@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
+import '../../../../../app/routes/route_names.dart';
+
 class SeeAllScreen extends StatelessWidget {
   SeeAllScreen({super.key});
 
@@ -115,12 +117,12 @@ class SeeAllScreen extends StatelessWidget {
       ),
       itemCount: products.length,
       itemBuilder: (context, index) {
-        return _buildProductCard(products[index]);
+        return _buildProductCard(context,products[index]);
       },
     );
   }
 
-  Widget _buildProductCard(Map<String, dynamic> product) {
+  Widget _buildProductCard(BuildContext context,Map<String, dynamic> product) {
     return Container(
       decoration: BoxDecoration(
         color: Colors.white,
@@ -132,75 +134,78 @@ class SeeAllScreen extends StatelessWidget {
           ),
         ],
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Expanded(
-            child: Stack(
-              children: [
-                Container(
-                  width: double.infinity,
-                  padding: EdgeInsets.all(10.w),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.vertical(top: Radius.circular(12.r)),
-                  ),
-                  child: ClipRRect(
-                    child: Image.asset(
-                      product['image'],
-                      fit: BoxFit.contain,
-                      cacheHeight: 250,
-                      errorBuilder: (context, error, stackTrace) => const Icon(Icons.image_not_supported),
+      child: InkWell(
+        onTap: ()=>Navigator.pushNamed(context, RouteNames.popularSellsScreen),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Expanded(
+              child: Stack(
+                children: [
+                  Container(
+                    width: double.infinity,
+                    padding: EdgeInsets.all(10.w),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.vertical(top: Radius.circular(12.r)),
                     ),
-                  ),
-                ),
-                Positioned(
-                  top: 8,
-                  right: 8,
-                  child: Container(
-                    padding: const EdgeInsets.all(5),
-                    decoration: const BoxDecoration(color: Color(0xFFF8F9FA), shape: BoxShape.circle),
-                    child: Icon(Icons.favorite_border, size: 16.sp, color: Colors.grey.shade400),
-                  ),
-                ),
-              ],
-            ),
-          ),
-          Padding(
-            padding: EdgeInsets.all(10.w),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  children: List.generate(5, (index) => Icon(Icons.star, size: 12.sp, color: Colors.amber.shade600)),
-                ),
-                SizedBox(height: 5.h),
-                Text(
-                  product['name'],
-                  style: TextStyle(fontSize: 13.sp, fontWeight: FontWeight.w600, color: Colors.black87),
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                ),
-                SizedBox(height: 6.h),
-                Row(
-                  children: [
-                    Text(
-                      '\$${product['price']}',
-                      style: TextStyle(fontSize: 16.sp, fontWeight: FontWeight.bold, color: Colors.redAccent),
-                    ),
-                    if (product['oldPrice'] != null) ...[
-                      SizedBox(width: 5.w),
-                      Text(
-                        '\$${product['oldPrice']}',
-                        style: TextStyle(fontSize: 11.sp, color: Colors.grey.shade400, decoration: TextDecoration.lineThrough),
+                    child: ClipRRect(
+                      child: Image.asset(
+                        product['image'],
+                        fit: BoxFit.contain,
+                        cacheHeight: 250,
+                        errorBuilder: (context, error, stackTrace) => const Icon(Icons.image_not_supported),
                       ),
-                    ],
-                  ],
-                ),
-              ],
+                    ),
+                  ),
+                  Positioned(
+                    top: 8,
+                    right: 8,
+                    child: Container(
+                      padding: const EdgeInsets.all(5),
+                      decoration: const BoxDecoration(color: Color(0xFFF8F9FA), shape: BoxShape.circle),
+                      child: Icon(Icons.favorite_border, size: 16.sp, color: Colors.grey.shade400),
+                    ),
+                  ),
+                ],
+              ),
             ),
-          ),
-        ],
+            Padding(
+              padding: EdgeInsets.all(10.w),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: List.generate(5, (index) => Icon(Icons.star, size: 12.sp, color: Colors.amber.shade600)),
+                  ),
+                  SizedBox(height: 5.h),
+                  Text(
+                    product['name'],
+                    style: TextStyle(fontSize: 13.sp, fontWeight: FontWeight.w600, color: Colors.black87),
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  SizedBox(height: 6.h),
+                  Row(
+                    children: [
+                      Text(
+                        '\$${product['price']}',
+                        style: TextStyle(fontSize: 16.sp, fontWeight: FontWeight.bold, color: Colors.redAccent),
+                      ),
+                      if (product['oldPrice'] != null) ...[
+                        SizedBox(width: 5.w),
+                        Text(
+                          '\$${product['oldPrice']}',
+                          style: TextStyle(fontSize: 11.sp, color: Colors.grey.shade400, decoration: TextDecoration.lineThrough),
+                        ),
+                      ],
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
